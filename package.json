@@ -1,0 +1,48 @@
+{
+  "name": "@bexcodex/scraper",
+  "version": "0.0.1",
+  "description": "bexcodex scraper",
+  "license": "MIT",
+  "author": "bexcodex",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bexcodex/scraper.git"
+  },
+  "bugs": {
+    "url": "https://github.com/bexcodex/scraper/issues"
+  },
+  "homepage": "https://github.com/bexcodex/scrape#readme",
+  "engines": {
+    "node": ">=18.18"
+  },
+  "packageManager": "npm@10.0.0",
+  "scripts": {
+    "generate:exports": "tsx scripts/generate-exports.ts",
+    "build": "npm run clean && npm run generate:exports && tsup",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "clean": "node -e \"import('node:fs/promises').then(({rm})=>rm('dist',{recursive:true,force:true}))\"",
+    "prepublishOnly": "npm run clean && npm run build"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.0",
+    "tsx": "^4.19.4",
+    "tsup": "^8.1.0",
+    "typescript": "^5.8.3"
+  }
+}
