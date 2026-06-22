@@ -1,40 +1,25 @@
 {
   "metadata": {
     "version": "1.0.0",
-    "last_run": "2026-06-21T04:54:00.467Z",
+    "last_run": "2026-06-22T08:53:06.581Z",
     "root": "/root/scraper",
     "include_patterns": [
-      "src/**/*.ts",
-      "package.json",
-      "tsup.config.ts",
-      "scripts/**/*.ts"
+      "src/**/*.ts"
     ],
     "exclude_patterns": [
       "**/*.test.ts",
-      "**/*.spec.ts",
-      "tests/**",
-      "__tests__/**",
-      "docs/**",
-      "*.md",
-      "LICENSE",
       "dist/**",
-      "build/**",
-      "node_modules/**",
-      "*.min.js"
+      "node_modules/**"
     ],
     "exceptions": []
   },
   "file_hashes": {
-    "package.json": "a5b33c897ce8876c58f94d8e06ee6f1a",
-    "scripts/generate-exports.ts": "7620fe3ac03e089b147a72ff19ac8425",
     "src/index.ts": "c88314ea5f39326689464e7b68ca0ae2",
-    "src/scrapers/tiktok.ts": "60b36cf65ec48d74c991196d2b39ed01",
-    "tsup.config.ts": "46302a9e107fc84af55532700c84863e"
+    "src/scrapers/tiktok.ts": "d79f45f8b9ffa9f36eb32ea183b399a7"
   },
   "folder_hashes": {
-    ".": "a190ac9d43e728978605752f8b483d9d",
-    "scripts": "698a8c4c6b55c6d54888d126cd2bfd29",
-    "src": "c8ae4b6ed7cdb32fcbdbd1886e2bba9b",
-    "src/scrapers": "79d553eab9bbcec8fd4de31c92a5c00a"
+    ".": "",
+    "src": "7b0d580dfb70446bbddd4fe33a568a0f",
+    "src/scrapers": "8927786005cca24a95fd4df24cd4fdd2"
   }
 }

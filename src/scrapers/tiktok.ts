@@ -1,65 +1,70 @@
-export type TiktokImageItem = {
-  display_image?: {
-    url_list?: string[];
-  };
-};
+import { z } from 'zod';
 
-export type TiktokAweme = {
-  music?: {
-    id_str?: string;
-    title?: string;
-    author?: string;
-    play_url?: {
-      uri?: string;
-    };
-    duration?: number;
-    cover_thumb?: {
-      url_list?: string[];
-    };
-    album?: string;
-  };
-  statistics?: Record<string, number> & {
-    aweme_id?: number;
-  };
-  author?: {
-    uid?: string;
-    unique_id?: string;
-    nickname?: string;
-    avatar_thumb?: {
-      url_list?: string[];
-    };
-    region?: string;
-  };
-  image_post_info?: {
-    images?: TiktokImageItem[];
-  };
-  aweme_id?: string;
-  desc?: string;
-  video?: {
-    cover?: {
-      url_list?: string[];
-    };
-    dynamic_cover?: {
-      url_list?: string[];
-    };
-    origin_cover?: {
-      url_list?: string[];
-    };
-    play_addr?: {
-      url_list?: string[];
-      data_size?: number;
-    };
-    download_addr?: {
-      url_list?: string[];
-      data_size?: number;
-    };
-    duration?: number;
-  };
-};
+// ---------------------------------------------------------------------------
+// Zod schemas — validate only the fields actually consumed by the mapper.
+// All fields are optional so that missing/extra API keys fall back gracefully.
+// ---------------------------------------------------------------------------
 
-export type TiktokApiResponse = {
-  aweme_list?: TiktokAweme[];
-};
+const UrlListSchema = z.object({ url_list: z.array(z.string()).optional() }).optional();
+
+const TiktokImageItemSchema = z.object({
+  display_image: UrlListSchema,
+});
+
+const TiktokAwemeSchema = z.object({
+  aweme_id: z.string().optional(),
+  desc: z.string().optional(),
+  music: z
+    .object({
+      id_str: z.string().optional(),
+      title: z.string().optional(),
+      author: z.string().optional(),
+      play_url: z.object({ uri: z.string().optional() }).optional(),
+      duration: z.number().optional(),
+      cover_thumb: UrlListSchema,
+      album: z.string().optional(),
+    })
+    .optional(),
+  statistics: z.record(z.string(), z.number()).optional(),
+  author: z
+    .object({
+      uid: z.string().optional(),
+      unique_id: z.string().optional(),
+      nickname: z.string().optional(),
+      avatar_thumb: UrlListSchema,
+      region: z.string().optional(),
+    })
+    .optional(),
+  image_post_info: z
+    .object({ images: z.array(TiktokImageItemSchema).optional() })
+    .optional(),
+  video: z
+    .object({
+      cover: UrlListSchema,
+      dynamic_cover: UrlListSchema,
+      origin_cover: UrlListSchema,
+      play_addr: z
+        .object({ url_list: z.array(z.string()).optional(), data_size: z.number().optional() })
+        .optional(),
+      download_addr: z
+        .object({ url_list: z.array(z.string()).optional(), data_size: z.number().optional() })
+        .optional(),
+      duration: z.number().optional(),
+    })
+    .optional(),
+});
+
+const TiktokApiResponseSchema = z.object({
+  aweme_list: z.array(TiktokAwemeSchema).optional(),
+});
+
+// ---------------------------------------------------------------------------
+// TypeScript types — derived from Zod so they stay in sync automatically.
+// ---------------------------------------------------------------------------
+
+export type TiktokImageItem = z.infer<typeof TiktokImageItemSchema>;
+export type TiktokAweme = z.infer<typeof TiktokAwemeSchema>;
+export type TiktokApiResponse = z.infer<typeof TiktokApiResponseSchema>;
 
 export type TiktokImageResult = {
   id: string;
@@ -108,6 +113,8 @@ export type TiktokResult = {
 const delay = (ms: number): Promise<void> => new Promise((resolve) => setTimeout(resolve, ms));
 
 export const tiktokdl = async (url: string): Promise<TiktokResult> => {
+  const invalidOrUnavailableMessage = 'Invalid link or video/photo unavailable';
+
   if (url.includes('vm.tiktok.com') || url.includes('vt.tiktok.com')) {
     const response = await fetch(url, {
       redirect: 'follow',
@@ -121,11 +128,11 @@ export const tiktokdl = async (url: string): Promise<TiktokResult> => {
 
   const isVideo = url.includes('/video/');
   const isPhoto = url.includes('/photo/');
-  if (!isVideo && !isPhoto) throw new Error('Video or Photo not found');
+  if (!isVideo && !isPhoto) throw new Error(invalidOrUnavailableMessage);
 
   const marker = isVideo ? '/video/' : '/photo/';
   const id = url.substring(url.indexOf(marker) + marker.length, url.indexOf(marker) + 26).split('?')[0];
-  if (!id) throw new Error('Video or Photo not found');
+  if (!id) throw new Error(invalidOrUnavailableMessage);
 
   const apiUrl = `https://api22-normal-c-alisg.tiktokv.com/aweme/v1/feed/?aweme_id=${id}&iid=7318518857994389254&device_id=7437644993508000801&channel=googleplay&app_name=musical_ly&version_code=300904&device_platform=android&device_type=Redmi%20Note%2010&version=12`;
 
@@ -147,7 +154,7 @@ export const tiktokdl = async (url: string): Promise<TiktokResult> => {
       continue;
     }
 
-    data = JSON.parse(body) as TiktokApiResponse;
+    data = TiktokApiResponseSchema.parse(JSON.parse(body));
     break;
   }
 

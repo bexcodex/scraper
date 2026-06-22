@@ -3,6 +3,8 @@
 ## Project Responsibility
 Small TypeScript scraper library for TikTok media metadata and download URLs.
 
+The library exposes scraper functions through a generated barrel and uses runtime validation in the scraper layer.
+
 ## System Entry Points
 - `package.json`: scripts, package metadata, Node/npm constraints.
 - `src/index.ts`: generated public export surface.
@@ -13,7 +15,7 @@ Small TypeScript scraper library for TikTok media metadata and download URLs.
 | Directory | Responsibility Summary | Detailed Map |
 |---|---|---|
 | `src/` | Library source and public API surface. | [View Map](src/codemap.md) |
-| `src/scrapers/` | Individual scraper implementations. | [View Map](src/scrapers/codemap.md) |
+| `src/scrapers/` | Individual scraper implementations with runtime validation. | [View Map](src/scrapers/codemap.md) |
 | `scripts/` | Code generation utilities. | [View Map](scripts/codemap.md) |
 
 ## Build Notes
