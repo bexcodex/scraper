@@ -58,6 +58,8 @@ const TiktokApiResponseSchema = z.object({
   aweme_list: z.array(TiktokAwemeSchema).optional(),
 });
 
+const TiktokInputSchema = z.url();
+
 // ---------------------------------------------------------------------------
 // TypeScript types — derived from Zod so they stay in sync automatically.
 // ---------------------------------------------------------------------------
@@ -113,6 +115,7 @@ export type TiktokResult = {
 const delay = (ms: number): Promise<void> => new Promise((resolve) => setTimeout(resolve, ms));
 
 export const tiktokdl = async (url: string): Promise<TiktokResult> => {
+  url = TiktokInputSchema.parse(url);
   const invalidOrUnavailableMessage = 'Invalid link or video/photo unavailable';
 
   if (url.includes('vm.tiktok.com') || url.includes('vt.tiktok.com')) {
